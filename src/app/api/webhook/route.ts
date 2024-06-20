@@ -43,10 +43,13 @@ export async function POST(request: Request) {
       type: eventType,
     };
     try {
-      await setDoc(doc(db, "log-pull-request", randomUUID()), {
+        console.log('enter try create')
+        const id = randomUUID()
+      await setDoc(doc(db, "log-pull-request", id), {
         response,
       });
     } catch (error) {
+        console.log(error, eventType)
       return Response.json(objectBuilder(response));
     }
   };
@@ -64,10 +67,13 @@ export async function POST(request: Request) {
       type: eventType,
     };
     try {
-      await setDoc(doc(db, "log-pull-request", randomUUID()), {
+        console.log('enter try approved')
+        const id = randomUUID()
+      await setDoc(doc(db, "log-pull-request", id), {
         response,
       });
     } catch (error) {
+        console.log(error, eventType)
       return Response.json(objectBuilder(response));
     }
   };
@@ -85,10 +91,13 @@ export async function POST(request: Request) {
       type: eventType,
     };
     try {
-      await setDoc(doc(db, "log-pull-request", randomUUID()), {
+        console.log('enter try comment')
+        const id = randomUUID()
+      await setDoc(doc(db, "log-pull-request", id), {
         response,
       });
     } catch (error) {
+        console.log(error, eventType)
       return Response.json(objectBuilder(response));
     }
   };
