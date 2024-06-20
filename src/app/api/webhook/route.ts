@@ -4,6 +4,7 @@ import { db } from "@/service/firebase";
 import { randomUUID } from "crypto";
 import { PullRequestApprovalPayloadType } from "@/constant/types/PullRequestApproval";
 import { PullRequestCommentPayloadType } from "@/constant/types/PullRequestComment";
+
 export async function POST(request: Request) {
   const eventType: string = request.headers.get("x-event-key") || "";
   type IPayload = PullRequestCreatedPayloadType &
@@ -16,6 +17,15 @@ export async function POST(request: Request) {
     PullrequestCreated: "pullrequest:created",
     PullrequestApproved: "pullrequest:approved",
     PullrqeustCommentCreated: "pullrequest:comment_created",
+  };
+
+  const objectBuilder = (data: Record<string, any>) => {
+    return {
+      code: 200,
+      message: "Success POST data and save to database",
+      data: data,
+      type: eventType,
+    };
   };
 
   const handlePullRequestCreate = async (
@@ -32,9 +42,13 @@ export async function POST(request: Request) {
       pullRequestCreatedDate: payload?.pullrequest?.created_on,
       type: eventType,
     };
-    await setDoc(doc(db, "log-pull-request", randomUUID()), {
-      response,
-    });
+    try {
+      await setDoc(doc(db, "log-pull-request", randomUUID()), {
+        response,
+      });
+    } catch (error) {
+      return Response.json(objectBuilder(response));
+    }
   };
 
   const handlePullRequestApproved = async (
@@ -49,9 +63,13 @@ export async function POST(request: Request) {
       approvalTime: payload?.approval?.date,
       type: eventType,
     };
-    await setDoc(doc(db, "log-pull-request", randomUUID()), {
-      response,
-    });
+    try {
+      await setDoc(doc(db, "log-pull-request", randomUUID()), {
+        response,
+      });
+    } catch (error) {
+      return Response.json(objectBuilder(response));
+    }
   };
 
   const handlePullRequestCommentCreated = async (
@@ -66,9 +84,13 @@ export async function POST(request: Request) {
       approvalTime: payload?.comment?.created_on,
       type: eventType,
     };
-    await setDoc(doc(db, "log-pull-request", randomUUID()), {
-      response,
-    });
+    try {
+      await setDoc(doc(db, "log-pull-request", randomUUID()), {
+        response,
+      });
+    } catch (error) {
+      return Response.json(objectBuilder(response));
+    }
   };
 
   switch (eventType) {
@@ -85,15 +107,6 @@ export async function POST(request: Request) {
       console.log(payload, "default");
       break;
   }
-
-  const objectBuilder = (data: Record<string, any>) => {
-    return {
-      code: 200,
-      message: "Success POST data and save to database",
-      data: response,
-      type: eventType,
-    };
-  };
 
   return Response.json(objectBuilder(payload));
 }
